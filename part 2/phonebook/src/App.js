@@ -1,19 +1,26 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456', id: 1 },
-    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
-    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
-    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
-  ])
+  const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
   const [personsToShow, setPersonsToShow] = useState([...persons])
 
-  const appyfilter = (filterString, array) => 
-      filterString !== ''
+  const hook = () => {
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        const persons = response.data
+        setPersons(persons)
+        setPersonsToShow(persons)
+      })
+  }
+  useEffect(hook, [])
+
+  const appyfilter = (filterString, array) =>
+    filterString !== ''
       ? setPersonsToShow(array.filter(person => person.name.toUpperCase().includes(filterString.toUpperCase())))
       : setPersonsToShow(array)
 
@@ -61,8 +68,8 @@ const App = () => {
       <h2>add a new</h2>
       <PersonForm addPerson={addPerson} newName={newName} handleNewName={handleNewName} newNumber={newNumber} handleNewNumber={handleNewNumber} />
       <h2>Numbers</h2>
-      <Persons personsToShow={personsToShow}/>
-      
+      <Persons personsToShow={personsToShow} />
+
     </div>
   )
 }
