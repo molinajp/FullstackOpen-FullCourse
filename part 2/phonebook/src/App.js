@@ -15,6 +15,7 @@ const App = () => {
         setPersons(persons)
         setPersonsToShow(persons)
       })
+      .catch(error => console.log('An error has occured'))
   }
   useEffect(hookGet, [])
 
@@ -45,6 +46,7 @@ const App = () => {
             setPersonsToShow(personsUpdated)
             appyfilter(filter, personsUpdated)
           })
+          .catch(error => console.log('An error has occured'))
       }
     } else {
       personsService
@@ -55,6 +57,7 @@ const App = () => {
           setPersonsToShow(copy)
           appyfilter(filter, copy)
         })
+        .catch(error => console.log('An error has occured'))
 
     }
     setNewName('')
@@ -84,7 +87,7 @@ const App = () => {
           setPersonsToShow(resultArray)
           appyfilter(filter, resultArray)
         })
-
+        .catch(error => console.log('An error has occured'))
     }
   }
 
