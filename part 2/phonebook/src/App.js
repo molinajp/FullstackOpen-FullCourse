@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import personsService from './services/persons'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -8,16 +8,15 @@ const App = () => {
   const [filter, setFilter] = useState('')
   const [personsToShow, setPersonsToShow] = useState([...persons])
 
-  const hook = () => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        const persons = response.data
+  const hookGet = () => {
+    personsService
+      .getAll()
+      .then(persons => {
         setPersons(persons)
         setPersonsToShow(persons)
       })
   }
-  useEffect(hook, [])
+  useEffect(hookGet, [])
 
   const appyfilter = (filterString, array) =>
     filterString !== ''
@@ -33,16 +32,30 @@ const App = () => {
     let newObject = {
       name: newName,
       number: newNumber,
-      id: persons.length + 1
     }
-    const isRepeated = (person) => person.name.toUpperCase() === newName.toUpperCase()
-    if (persons.some(isRepeated)) {
-      alert(`${newName} is already added to the phonebook`)
+    const personRepeated = persons.filter(person => person.name.toUpperCase() === newName.toUpperCase())
+    if (personRepeated.length !== 0) {
+      if (window.confirm(`${newName} is already added to the phonebook, replace the old number with a new one?`)){
+        const changedPerson = {...personRepeated[0], number: newNumber}
+        personsService
+          .updatePerson(changedPerson)
+          .then(personUpdated => {
+            const personsUpdated = persons.map(person => person.id !== changedPerson.id ? person : personUpdated)
+            setPersons(personsUpdated)
+            setPersonsToShow(personsUpdated)
+            appyfilter(filter, personsUpdated)
+          })
+      }
     } else {
-      const copy = persons.concat(newObject);
-      setPersons(copy)
-      setPersonsToShow(copy)
-      appyfilter(filter, copy)
+      personsService
+        .create(newObject)
+        .then(newPerson => {
+          const copy = persons.concat(newPerson);
+          setPersons(copy)
+          setPersonsToShow(copy)
+          appyfilter(filter, copy)
+        })
+
     }
     setNewName('')
     setNewNumber('')
@@ -61,6 +74,20 @@ const App = () => {
     appyfilter(event.target.value, persons)
   }
 
+  const handleDelete = ({ name, id }) => {
+    if (window.confirm(`Delete ${name} ?`)) {
+      personsService
+        .deletePerson(id)
+        .then(response => {
+          const resultArray = persons.filter(person => person.id !== id)
+          setPersons(resultArray)
+          setPersonsToShow(resultArray)
+          appyfilter(filter, resultArray)
+        })
+
+    }
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -68,7 +95,7 @@ const App = () => {
       <h2>add a new</h2>
       <PersonForm addPerson={addPerson} newName={newName} handleNewName={handleNewName} newNumber={newNumber} handleNewNumber={handleNewNumber} />
       <h2>Numbers</h2>
-      <Persons personsToShow={personsToShow} />
+      <Persons personsToShow={personsToShow} handleDelete={handleDelete} />
 
     </div>
   )
@@ -86,5 +113,11 @@ const PersonForm = ({ addPerson, newName, handleNewName, newNumber, handleNewNum
   </form>
 }
 
-const Persons = ({ personsToShow }) => personsToShow.map(person => <p key={person.id}>{person.name} {person.number}</p>)
+const Persons = ({ personsToShow, handleDelete }) => {
+  return personsToShow.map(person =>
+    <div key={person.id}>
+      {person.name} {person.number}<button onClick={() => handleDelete(person)}>delete</button>
+    </div>
+  )
+}
 export default App
