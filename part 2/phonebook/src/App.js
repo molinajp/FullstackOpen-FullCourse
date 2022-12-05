@@ -7,6 +7,8 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
   const [personsToShow, setPersonsToShow] = useState([...persons])
+  const [message, setMessage] = useState(null)
+  const [cssClassName, setCssClassName] = useState(null)
 
   const hookGet = () => {
     personsService
@@ -36,8 +38,8 @@ const App = () => {
     }
     const personRepeated = persons.filter(person => person.name.toUpperCase() === newName.toUpperCase())
     if (personRepeated.length !== 0) {
-      if (window.confirm(`${newName} is already added to the phonebook, replace the old number with a new one?`)){
-        const changedPerson = {...personRepeated[0], number: newNumber}
+      if (window.confirm(`${newName} is already added to the phonebook, replace the old number with a new one?`)) {
+        const changedPerson = { ...personRepeated[0], number: newNumber }
         personsService
           .updatePerson(changedPerson)
           .then(personUpdated => {
@@ -45,8 +47,21 @@ const App = () => {
             setPersons(personsUpdated)
             setPersonsToShow(personsUpdated)
             appyfilter(filter, personsUpdated)
+            setMessage(`${personUpdated.name} number has been updated`)
+            setCssClassName(`successful`)
+            setTimeout(() => {
+              setMessage(null)
+              setCssClassName(null)
+            }, 5000)
           })
-          .catch(error => console.log('An error has occured'))
+          .catch(error => {
+            setMessage(`${personRepeated[0].name} has already been removed from server`)
+            setCssClassName(`error`)
+            setTimeout(() => {
+              setMessage(null)
+              setCssClassName(null)
+            }, 5000)
+          })
       }
     } else {
       personsService
@@ -56,6 +71,12 @@ const App = () => {
           setPersons(copy)
           setPersonsToShow(copy)
           appyfilter(filter, copy)
+          setMessage(`Added ${newPerson.name}`)
+          setCssClassName(`successful`)
+          setTimeout(() => {
+            setMessage(null)
+            setCssClassName(null)
+          }, 5000)
         })
         .catch(error => console.log('An error has occured'))
 
@@ -94,6 +115,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} cssClassName={cssClassName}/>
       <Filter filter={filter} handleFilter={handleFilter} />
       <h2>add a new</h2>
       <PersonForm addPerson={addPerson} newName={newName} handleNewName={handleNewName} newNumber={newNumber} handleNewNumber={handleNewNumber} />
@@ -123,4 +145,17 @@ const Persons = ({ personsToShow, handleDelete }) => {
     </div>
   )
 }
+
+const Notification = ({ message, cssClassName }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className={cssClassName}>
+      {message}
+    </div>
+  )
+}
+
 export default App
