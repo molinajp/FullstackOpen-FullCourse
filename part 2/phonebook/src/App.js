@@ -28,10 +28,6 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault()
-    if (newName === '' || newNumber === '') {
-      alert(`Fields can't be blank`);
-      return
-    }
     let newObject = {
       name: newName,
       number: newNumber,
@@ -55,7 +51,7 @@ const App = () => {
             }, 5000)
           })
           .catch(error => {
-            setMessage(`${personRepeated[0].name} has already been removed from server`)
+            setMessage(`${error.response.data.error}`)
             setCssClassName(`error`)
             setTimeout(() => {
               setMessage(null)
@@ -78,7 +74,14 @@ const App = () => {
             setCssClassName(null)
           }, 5000)
         })
-        .catch(error => console.log('An error has occured'))
+        .catch(error => {
+          setMessage(`${error.response.data.error}`)
+            setCssClassName(`error`)
+            setTimeout(() => {
+              setMessage(null)
+              setCssClassName(null)
+            }, 5000)
+        })
 
     }
     setNewName('')
