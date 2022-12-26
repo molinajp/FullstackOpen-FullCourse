@@ -49,8 +49,8 @@ const App = () => {
     } catch (exception) {
       setUsername('')
       setPassword('')
-      setMessage(`wrong username or password`)
-      setCssClassName(`error`)
+      setMessage('wrong username or password')
+      setCssClassName('error')
       setTimeout(() => {
         setMessage(null)
         setCssClassName(null)
@@ -64,7 +64,7 @@ const App = () => {
     setUser(null)
     blogService.setToken(null)
     setMessage(`goodbye ${user.name}`)
-    setCssClassName(`successful`)
+    setCssClassName('successful')
     setTimeout(() => {
       setMessage(null)
       setCssClassName(null)
@@ -85,7 +85,7 @@ const App = () => {
     const allBlogs = await blogService.getAll()
     setAndSortBlogs(allBlogs)
     setMessage(`blog ${blog.title} by ${blog.author} liked`)
-    setCssClassName(`successful`)
+    setCssClassName('successful')
     setTimeout(() => {
       setMessage(null)
       setCssClassName(null)
@@ -99,7 +99,7 @@ const App = () => {
       const allBlogs = await blogService.getAll()
       setAndSortBlogs(allBlogs)
       setMessage(`blog ${blog.title} by ${blog.author} has been successfully removed`)
-      setCssClassName(`successful`)
+      setCssClassName('successful')
       setTimeout(() => {
         setMessage(null)
         setCssClassName(null)

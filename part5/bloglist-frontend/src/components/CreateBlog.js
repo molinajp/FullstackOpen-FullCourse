@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import blogService from '../services/blogs'
+import PropTypes from 'prop-types'
 
 const CreateBlog = ({ setBlogs, setMessage, setCssClassName }) => {
   const [newTitle, setNewTitle] = useState('')
@@ -34,7 +35,7 @@ const CreateBlog = ({ setBlogs, setMessage, setCssClassName }) => {
     setNewAuthor('')
     setNewUrl('')
     setMessage(`a new blog ${newSavedBlog.title} by ${newSavedBlog.author} added`)
-    setCssClassName(`successful`)
+    setCssClassName('successful')
     toggleVisibility()
     setTimeout(() => {
       setMessage(null)
@@ -68,6 +69,12 @@ const CreateBlog = ({ setBlogs, setMessage, setCssClassName }) => {
 
     </form>
   }
+}
+
+CreateBlog.propTypes = {
+  setBlogs: PropTypes.func.isRequired,
+  setMessage: PropTypes.func.isRequired,
+  setCssClassName: PropTypes.func.isRequired
 }
 
 export default CreateBlog

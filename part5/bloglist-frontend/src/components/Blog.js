@@ -18,7 +18,7 @@ const Blog = ({ blog, updateLikes, username, deleteBlog }) => {
 
   if (!showInfo) {
     return <div style={blogStyle}>
-      '{blog.title}' by {blog.author} <button onClick={() => setShowInfo(!showInfo)}>view</button>
+      {blog.title} by {blog.author} <button onClick={() => setShowInfo(!showInfo)}>view</button>
     </div>
   } else {
     return <div style={blogStyle}>
