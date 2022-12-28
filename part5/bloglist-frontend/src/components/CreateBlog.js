@@ -1,8 +1,7 @@
-import { useState } from 'react'
-import blogService from '../services/blogs'
+import { useState, } from 'react'
 import PropTypes from 'prop-types'
 
-const CreateBlog = ({ setBlogs, setMessage, setCssClassName }) => {
+const CreateBlog = ({ addNewBlog }) => {
   const [newTitle, setNewTitle] = useState('')
   const [newAuthor, setNewAuthor] = useState('')
   const [newUrl, setNewUrl] = useState('')
@@ -20,27 +19,18 @@ const CreateBlog = ({ setBlogs, setMessage, setCssClassName }) => {
     setNewUrl(event.target.value)
   }
 
-  const addNewBlog = async (event) => {
+  const addBlog = (event) => {
     event.preventDefault()
     const newBlog = {
       title: newTitle,
       author: newAuthor,
       url: newUrl
     }
-
-    const newSavedBlog = await blogService.create(newBlog)
-    const allBlogs = await blogService.getAll()
-    setBlogs(allBlogs)
     setNewTitle('')
     setNewAuthor('')
     setNewUrl('')
-    setMessage(`a new blog ${newSavedBlog.title} by ${newSavedBlog.author} added`)
-    setCssClassName('successful')
     toggleVisibility()
-    setTimeout(() => {
-      setMessage(null)
-      setCssClassName(null)
-    }, 5000)
+    addNewBlog(newBlog)
   }
 
   const toggleVisibility = () => {
@@ -53,15 +43,15 @@ const CreateBlog = ({ setBlogs, setMessage, setCssClassName }) => {
   }
 
   if (!visibilityForm) {
-    return <button onClick={toggleVisibility}>new note</button>
+    return <button onClick={toggleVisibility} id='new-note'>new note</button>
   } else {
-    return <form onSubmit={addNewBlog}>
+    return <form onSubmit={addBlog}>
       <h2>create new</h2>
-      <div>title: <input value={newTitle} onChange={handleNewTitle} /></div>
-      <div>author: <input value={newAuthor} onChange={handleNewAuthor} /></div>
-      <div>url: <input value={newUrl} onChange={handleNewUrl} /></div>
+      <div>title: <input id='title' value={newTitle} onChange={handleNewTitle} placeholder='title'/></div>
+      <div>author: <input id='author' value={newAuthor} onChange={handleNewAuthor} placeholder='author'/></div>
+      <div>url: <input id='url' value={newUrl} onChange={handleNewUrl} placeholder='url'/></div>
       <div>
-        <button type='submit'>create</button>
+        <button type='submit' id='create-blog'>create</button>
       </div>
       <div>
         <button type='button' onClick={toggleVisibility}>cancel</button>
@@ -72,9 +62,7 @@ const CreateBlog = ({ setBlogs, setMessage, setCssClassName }) => {
 }
 
 CreateBlog.propTypes = {
-  setBlogs: PropTypes.func.isRequired,
-  setMessage: PropTypes.func.isRequired,
-  setCssClassName: PropTypes.func.isRequired
+  addNewBlog: PropTypes.func.isRequired,
 }
 
 export default CreateBlog

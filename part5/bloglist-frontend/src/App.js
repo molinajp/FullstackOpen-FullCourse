@@ -71,6 +71,18 @@ const App = () => {
     }, 5000)
   }
 
+  const addNewBlog = async (newBlog) => {
+    const newSavedBlog = await blogService.create(newBlog)
+    const allBlogs = await blogService.getAll()
+    setAndSortBlogs(allBlogs)
+    setMessage(`a new blog ${newSavedBlog.title} by ${newSavedBlog.author} added`)
+    setCssClassName('successful')
+    setTimeout(() => {
+      setMessage(null)
+      setCssClassName(null)
+    }, 5000)
+  }
+
   const updateLikes = async (blog) => {
     const updatedBlog = {
       user: blog.user.id,
@@ -112,10 +124,11 @@ const App = () => {
     <div>
       <h2>log in to application</h2>
       <Notification message={message} cssClassName={cssClassName} />
-      <form onSubmit={handleLogin}>
+      <form onSubmit={handleLogin} id='login-form'>
         <div>
           username
           <input
+            id="username"
             type="text"
             value={username}
             name="Username"
@@ -125,13 +138,14 @@ const App = () => {
         <div>
           password
           <input
+            id="password"
             type="password"
             value={password}
             name="Password"
             onChange={({ target }) => setPassword(target.value)}
           />
         </div>
-        <button type="submit">login</button>
+        <button type="submit" id="login-button">login</button>
       </form>
     </div>
   )
@@ -139,8 +153,8 @@ const App = () => {
     <div>
       {user === null
         ? loginForm()
-        : <Blogs blogs={blogs} name={user.name} handleLogout={handleLogout} message={message} cssClassName={cssClassName}
-          setBlogs={setAndSortBlogs} setCssClassName={setCssClassName} setMessage={setMessage} updateLikes={updateLikes}
+        : <Blogs blogs={blogs} name={user.name} handleLogout={handleLogout} message={message}
+          cssClassName={cssClassName} addNewBlog={addNewBlog} updateLikes={updateLikes}
           username={user.username} deleteBlog={deleteBlog} />}
     </div>
   )
@@ -150,10 +164,10 @@ const Blogs = (props) => {
   return <div>
     <h2>blogs</h2>
     <Notification message={props.message} cssClassName={props.cssClassName} />
-    <p>{props.name} logged in <button onClick={props.handleLogout}>logout</button></p>
-    <CreateBlog setBlogs={props.setBlogs} setCssClassName={props.setCssClassName} setMessage={props.setMessage} />
+    <p>{props.name} logged in <button id='logout' onClick={props.handleLogout}>logout</button></p>
+    <CreateBlog addNewBlog={props.addNewBlog} />
     {props.blogs.map(blog =>
-      <Blog key={blog.id} blog={blog} updateLikes={() => props.updateLikes(blog)} username={props.username} deleteBlog={() => props.deleteBlog(blog)} />)
+      <Blog className='blog' key={blog.id} blog={blog} updateLikes={() => props.updateLikes(blog)} username={props.username} deleteBlog={() => props.deleteBlog(blog)} />)
     }
   </div>
 }

@@ -17,12 +17,12 @@ const Blog = ({ blog, updateLikes, username, deleteBlog }) => {
   }
 
   if (!showInfo) {
-    return <div style={blogStyle}>
+    return <div className='blog' style={blogStyle}>
       {blog.title} by {blog.author} <button onClick={() => setShowInfo(!showInfo)}>view</button>
     </div>
   } else {
-    return <div style={blogStyle}>
-      <div>{blog.title} {blog.author} <button onClick={() => setShowInfo(!showInfo)}>hide</button></div>
+    return <div className='blog' style={blogStyle}>
+      <div>{blog.title} by {blog.author} <button onClick={() => setShowInfo(!showInfo)}>hide</button></div>
       <div>{blog.url}</div>
       <div>likes {blog.likes}<button onClick={updateLikes}>like</button></div>
       <div>{blog.user.name}</div>
